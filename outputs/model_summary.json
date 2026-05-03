@@ -1,0 +1,151 @@
+{
+  "project": "EGFR Bioactivity Prediction — QSAR Pipeline",
+  "date": "2026-05-02",
+  "target": "EGFR (CHEMBL203)",
+  "task": "Regression — predict pIC50 from ECFP4 Morgan fingerprints",
+  "dataset": {
+    "n_compounds": 10546,
+    "n_raw": 25758,
+    "pIC50_mean": 6.8535,
+    "pIC50_std": 1.3369,
+    "active_pct": 72.4,
+    "ro5_pass_pct": 72.8,
+    "train_size": 8437,
+    "test_size": 2109
+  },
+  "features": {
+    "primary": "Morgan Fingerprints (ECFP4)",
+    "radius": 2,
+    "n_bits": 2048,
+    "sparsity_pct": 97.0,
+    "lipinski_descriptors": 5,
+    "rdkit_2d_descriptors": 207
+  },
+  "phase1_baseline": {
+    "Random Forest": {
+      "R²_test": 0.6949,
+      "RMSE": 0.728,
+      "MAE": 0.5586,
+      "CV_R²": "0.6769 ± 0.0164"
+    },
+    "XGBoost": {
+      "R²_test": 0.6639,
+      "RMSE": 0.7641,
+      "MAE": 0.5907,
+      "CV_R²": "0.6546 ± 0.0201"
+    },
+    "LightGBM": {
+      "R²_test": 0.7149,
+      "RMSE": 0.7038,
+      "MAE": 0.5268,
+      "CV_R²": "0.6948 ± 0.0182"
+    },
+    "SVR (RBF)": {
+      "R²_test": 0.6917,
+      "RMSE": 0.7319,
+      "MAE": 0.5427,
+      "CV_R²": "0.6588 ± 0.0178"
+    }
+  },
+  "phase2_advanced": {
+    "fingerprint_comparison_CV_R2": {
+      "RDKit FP": 0.696,
+      "ECFP4 (Morgan)": 0.690,
+      "MACCS Keys": 0.621
+    },
+    "murcko_scaffold_analysis": {
+      "unique_scaffolds": 3857,
+      "diversity_index_pct": 36.6,
+      "singleton_scaffold_pct": 60
+    },
+    "applicability_domain_kNN_k5": {
+      "in_domain_pct": 96.1,
+      "R2_in_domain": 0.714,
+      "threshold_percentile": 95
+    },
+    "stacking_Ridge_meta": {
+      "R²_test": 0.735,
+      "RMSE": 0.678,
+      "MAE": 0.503,
+      "base_models": ["Random Forest", "XGBoost", "LightGBM", "SVR (RBF)"],
+      "meta_learner": "Ridge regression",
+      "note": "Best classical model overall"
+    }
+  },
+  "phase3_extended": {
+    "optuna_lgbm_50trials_TPE": {
+      "R²_test": 0.731,
+      "RMSE": 0.684,
+      "MAE": 0.507,
+      "n_trials": 50,
+      "sampler": "TPE"
+    },
+    "ecfp4_plus_rdkit2d_RF": {
+      "R²_test": 0.718,
+      "delta_vs_ecfp4_only": "+0.003",
+      "n_descriptors_after_cleaning": 207
+    },
+    "conformal_prediction_split": {
+      "target_coverage": 0.90,
+      "empirical_coverage": 0.909,
+      "interval_width_pIC50": 1.251,
+      "model": "LightGBM",
+      "guarantee": "distribution-free"
+    },
+    "chembert_zinc_base_v1": {
+      "R²_test": 0.539,
+      "embedding_dim": 384,
+      "model": "LightGBM on frozen embeddings",
+      "note": "ECFP4 wins at N=10k; fine-tuning expected to narrow gap"
+    },
+    "gcn_3layer_pytorch_geometric": {
+      "R²_test": 0.4807,
+      "RMSE": 0.9449,
+      "MAE": 0.7356,
+      "epochs": 100,
+      "architecture": "3×GCNConv(128) → global_mean_pool → MLP(64,1)"
+    },
+    "erbb_family_compounds": {
+      "EGFR_CHEMBL203": 10546,
+      "ErbB2_CHEMBL1824": 2494,
+      "ErbB3_CHEMBL2363049": 83,
+      "ErbB4_CHEMBL3009": 225
+    }
+  },
+  "phase4_rigour": {
+    "scaffold_split_LightGBM": {
+      "R²_test": 0.607,
+      "RMSE": 0.878,
+      "R2_random_split": 0.715,
+      "generalisation_gap": -0.108,
+      "protocol": "Murcko scaffold grouping (MoleculeNet/Chemprop standard)"
+    },
+    "bootstrap_CI_1000_resamples_LightGBM": {
+      "R²_point": 0.715,
+      "R²_95CI_lower": 0.691,
+      "R²_95CI_upper": 0.737,
+      "RMSE_95CI_lower": 0.676,
+      "RMSE_95CI_upper": 0.731
+    },
+    "activity_cliff_analysis": {
+      "tanimoto_threshold": 0.6,
+      "delta_pIC50_threshold": 2.0,
+      "similar_pairs": 5422,
+      "cliff_pairs": 241,
+      "cliff_density_pct": 4.4
+    },
+    "learning_curves_LightGBM": {
+      "R2_at_5pct": 0.365,
+      "R2_at_100pct": 0.705,
+      "plateau_reached": false,
+      "note": "Still rising at 100% data — more data would improve performance"
+    }
+  },
+  "best_model": {
+    "name": "Stacking (Ridge meta-learner)",
+    "test_R²": 0.735,
+    "test_RMSE": 0.678,
+    "test_MAE": 0.503,
+    "note": "Best single LightGBM: R²=0.715; scaffold-split realistic estimate: R²=0.607"
+  }
+}

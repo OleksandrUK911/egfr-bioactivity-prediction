@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+wheels/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data — large files; keep only the curated CSV
+data/multitarget_bioactivity.csv
+data/raw_*.csv
+data/*.sdf
+data/*.db
+
+# Saved models (large binaries — regenerate from notebook)
+outputs/best_model.joblib
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code metadata
+.claude/
+
+# Secrets / credentials
+.env
+*.pem
+*.key
+hf_token.txt
+
+# Logs
+*.log
+optuna.db
+optuna_study.db
+
+# nbconvert artefacts
+*.html
+*.pdf

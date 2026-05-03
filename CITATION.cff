@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this project in your research or work, please cite it as below."
+authors:
+  - family-names: Ukrainskyi
+    given-names: Oleksandr
+    orcid: ""
+title: "EGFR Bioactivity Prediction — Drug Discovery ML Pipeline"
+abstract: >
+  An end-to-end QSAR pipeline for predicting the bioactivity (pIC50) of
+  small-molecule EGFR inhibitors. Combines classical ML (Random Forest,
+  XGBoost, LightGBM, SVR, stacking) with deep learning (ChemBERTa, GCN)
+  and advanced analyses (Optuna HPO, conformal prediction, scaffold analysis,
+  applicability domain). Trained on 10,546 compounds from ChEMBL 33.
+version: "1.0.0"
+date-released: "2026-05-01"
+license: MIT
+repository-code: "https://github.com/OleksandrUK911/egfr-bioactivity-prediction"
+keywords:
+  - drug-discovery
+  - QSAR
+  - cheminformatics
+  - machine-learning
+  - EGFR
+  - ChEMBL
+  - molecular-fingerprints
+  - bioactivity-prediction
