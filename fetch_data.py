@@ -16,7 +16,8 @@ Examples:
     python fetch_data.py --extra-sources pubchem,bindingdb,excape
 
     # Use a locally-downloaded ExCAPE / BindingDB dump instead of fetching:
-    python fetch_data.py --extra-sources excape --excape-tsv path/to/pubchem.chembl.dataset4publication_inchi_smiles_v2.tsv.xz
+    python fetch_data.py --extra-sources excape \
+        --excape-tsv path/to/pubchem.chembl.dataset4publication_inchi_smiles_v2.tsv.xz
     python fetch_data.py --extra-sources bindingdb --bindingdb-tsv path/to/BindingDB_All.tsv
 
 Notes on extra sources:
@@ -42,10 +43,10 @@ import pandas as pd
 # Known kinase targets relevant to this project
 # ----------------------------------------------------------------------------
 TARGETS = {
-    'EGFR':  'CHEMBL203',     # primary target
-    'ERBB2': 'CHEMBL1824',    # HER2
-    'ERBB3': 'CHEMBL2363049', # HER3
-    'ERBB4': 'CHEMBL3009',    # HER4
+    'EGFR':  'CHEMBL203',      # primary target
+    'ERBB2': 'CHEMBL1824',     # HER2
+    'ERBB3': 'CHEMBL2363049',  # HER3
+    'ERBB4': 'CHEMBL3009',     # HER4
 }
 
 
@@ -66,7 +67,7 @@ def fetch_target(alias: str, chembl_id: str, out_dir: str = 'data') -> pd.DataFr
 
     out_csv = os.path.join(out_dir, f'{alias.lower()}_bioactivity_curated.csv')
     print(f'\n=== {alias} ({chembl_id}) ===')
-    print(f'Connecting to ChEMBL...')
+    print('Connecting to ChEMBL...')
 
     res = new_client.activity.filter(
         target_chembl_id=chembl_id,
@@ -133,7 +134,7 @@ def build_multi_target_table(per_target: dict[str, pd.DataFrame],
             smiles_lookup.setdefault(cid, smi)
         parts.append(
             sub[['molecule_chembl_id', 'pIC50']]
-                .rename(columns={'pIC50': f'pIC50_{alias}'})
+            .rename(columns={'pIC50': f'pIC50_{alias}'})
         )
 
     if not parts:
@@ -150,12 +151,12 @@ def build_multi_target_table(per_target: dict[str, pd.DataFrame],
 
     pic_cols = [c for c in wide.columns if c.startswith('pIC50_')]
     n_full = wide[pic_cols].notna().all(axis=1).sum()
-    print(f'\n=== Multi-target wide table ===')
+    print('\n=== Multi-target wide table ===')
     print(f'Saved: {out_csv}')
     print(f'  Unique molecules     : {len(wide):,}')
     print(f'  Compounds with all   : {n_full:,} '
           f'({n_full / max(len(wide), 1) * 100:.1f}%) — usable for joint training')
-    print(f'  Per-target coverage  :')
+    print('  Per-target coverage  :')
     for c in pic_cols:
         print(f'    {c:<15} {wide[c].notna().sum():>6,} compounds')
     return wide

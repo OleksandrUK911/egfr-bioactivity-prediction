@@ -1,12 +1,13 @@
 """Executes the notebook with Windows asyncio + UTF-8 fix."""
 import asyncio
 import sys
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 import nbformat
 from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
+
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 with open('bioactivity_prediction.ipynb', encoding='utf-8') as f:
     nb = nbformat.read(f, as_version=4)
@@ -31,15 +32,15 @@ except CellExecutionError as e:
     print(f'Cell error (partial output saved): {msg}')
     errors.append(msg)
 except Exception as e:
-    print(f'ERROR: {type(e).__name__}: {str(e).encode("utf-8","replace").decode()[:300]}')
+    print(f'ERROR: {type(e).__name__}: {str(e).encode("utf-8", "replace").decode()[:300]}')
 finally:
     with open('bioactivity_prediction_executed.ipynb', 'w', encoding='utf-8') as f:
         nbformat.write(nb, f)
 
 total_code = sum(1 for c in nb.cells if c.cell_type == 'code')
-executed   = sum(1 for c in nb.cells if c.cell_type == 'code'
+executed = sum(1 for c in nb.cells if c.cell_type == 'code'
                  and c.get('execution_count') is not None)
 cell_errors = sum(1 for c in nb.cells for o in c.get('outputs', [])
                   if o.get('output_type') == 'error')
-print(f'Saved: bioactivity_prediction_executed.ipynb')
+print('Saved: bioactivity_prediction_executed.ipynb')
 print(f'  Code cells: {total_code}, executed: {executed}, cell errors: {cell_errors}')

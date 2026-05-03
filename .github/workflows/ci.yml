@@ -24,7 +24,7 @@ jobs:
           pip install rdkit-pypi scikit-learn pandas numpy lightgbm pytest flake8
 
       - name: Lint
-        run: flake8 app.py fetch_data.py run_notebook.py --max-line-length 100
+        run: flake8 app.py fetch_data.py run_notebook.py --max-line-length 120
 
       - name: Unit tests
         run: pytest tests/ -v

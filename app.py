@@ -425,13 +425,27 @@ with tab_eda:
         "The curation pipeline removes each source of noise systematically:"
     )
     curation_steps = pd.DataFrame([
-        {"Step": "1. Unit filter",        "Condition": "standard_units == 'nM'",         "Rationale": "Ensures all IC50 values are on the same scale"},
-        {"Step": "2. Relation filter",    "Condition": "standard_relation == '='",        "Rationale": "Removes '>' and '<' (censored values) — unusable for regression"},
-        {"Step": "3. Remove nulls",       "Condition": "SMILES and IC50 not null/empty", "Rationale": "Drops compounds with missing structure or activity"},
-        {"Step": "4. Numeric coercion",   "Condition": "IC50 parseable as float",        "Rationale": "Drops corrupted numeric fields"},
-        {"Step": "5. Deduplication",      "Condition": "Median IC50 per ChEMBL ID",      "Rationale": "Multiple assays per compound → single robust estimate"},
-        {"Step": "6. pIC50 range",        "Condition": "pIC50 ∈ [3, 12]",               "Rationale": "Removes extreme outliers (likely assay artefacts)"},
-        {"Step": "7. SMILES validation",  "Condition": "RDKit.MolFromSmiles != None",    "Rationale": "Discards malformed SMILES that cannot be processed"},
+        {"Step": "1. Unit filter",
+         "Condition": "standard_units == 'nM'",
+         "Rationale": "Ensures all IC50 values are on the same scale"},
+        {"Step": "2. Relation filter",
+         "Condition": "standard_relation == '='",
+         "Rationale": "Removes '>' and '<' (censored values) — unusable for regression"},
+        {"Step": "3. Remove nulls",
+         "Condition": "SMILES and IC50 not null/empty",
+         "Rationale": "Drops compounds with missing structure or activity"},
+        {"Step": "4. Numeric coercion",
+         "Condition": "IC50 parseable as float",
+         "Rationale": "Drops corrupted numeric fields"},
+        {"Step": "5. Deduplication",
+         "Condition": "Median IC50 per ChEMBL ID",
+         "Rationale": "Multiple assays per compound → single robust estimate"},
+        {"Step": "6. pIC50 range",
+         "Condition": "pIC50 ∈ [3, 12]",
+         "Rationale": "Removes extreme outliers (likely assay artefacts)"},
+        {"Step": "7. SMILES validation",
+         "Condition": "RDKit.MolFromSmiles != None",
+         "Rationale": "Discards malformed SMILES that cannot be processed"},
     ])
     st.dataframe(curation_steps, hide_index=True, use_container_width=True)
 
@@ -554,7 +568,8 @@ with tab_models:
     if p3.get("optuna_lgbm_50trials_TPE"):
         m = p3["optuna_lgbm_50trials_TPE"]
         r2_o = next((v for k, v in m.items() if "test" in k.lower()), "—")
-        adv_rows.append({"Model": f"LightGBM + Optuna ({m.get('n_trials','?')} trials, {m.get('sampler','TPE')})",
+        label = f"LightGBM + Optuna ({m.get('n_trials', '?')} trials, {m.get('sampler', 'TPE')})"
+        adv_rows.append({"Model": label,
                           "R² test": r2_o,
                           "RMSE": m.get("RMSE", "—"), "MAE": m.get("MAE", "—"),
                           "Note": "Bayesian HPO"})
@@ -720,10 +735,14 @@ with tab_chem:
         if erbb:
             st.markdown("**ChEMBL 33 compound counts per target:**")
             erbb_df = pd.DataFrame([
-                {"Target": "EGFR (CHEMBL203)",         "Compounds": erbb.get("EGFR_CHEMBL203", 10546),  "Data density": "Dense"},
-                {"Target": "ErbB2 (CHEMBL1824)",       "Compounds": erbb.get("ErbB2_CHEMBL1824", 2494), "Data density": "Moderate"},
-                {"Target": "ErbB4 (CHEMBL3009)",       "Compounds": erbb.get("ErbB4_CHEMBL3009", 225),  "Data density": "Sparse"},
-                {"Target": "ErbB3 (CHEMBL2363049)",    "Compounds": erbb.get("ErbB3_CHEMBL2363049", 83),"Data density": "Very sparse"},
+                {"Target": "EGFR (CHEMBL203)",
+                 "Compounds": erbb.get("EGFR_CHEMBL203", 10546),  "Data density": "Dense"},
+                {"Target": "ErbB2 (CHEMBL1824)",
+                 "Compounds": erbb.get("ErbB2_CHEMBL1824", 2494), "Data density": "Moderate"},
+                {"Target": "ErbB4 (CHEMBL3009)",
+                 "Compounds": erbb.get("ErbB4_CHEMBL3009", 225),  "Data density": "Sparse"},
+                {"Target": "ErbB3 (CHEMBL2363049)",
+                 "Compounds": erbb.get("ErbB3_CHEMBL2363049", 83), "Data density": "Very sparse"},
             ])
             st.dataframe(erbb_df, hide_index=True, use_container_width=True)
         st.markdown(

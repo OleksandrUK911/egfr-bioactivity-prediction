@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 120
+# Alignment and style choices that are intentional in this codebase:
+# E221: multiple spaces before operator (column alignment in dicts/tables)
+# E241: multiple spaces after ':' or ',' (column alignment)
+# E226: missing whitespace around arithmetic operator (implicit precedence)
+# E127/E128: visual indent continuation lines
+# E702: multiple statements on one line
+# W503/W504: line break before/after binary operator
+ignore = E221,E241,E226,E127,E128,E702,W503,W504
