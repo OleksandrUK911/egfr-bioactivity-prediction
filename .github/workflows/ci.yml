@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install rdkit-pypi scikit-learn pandas numpy lightgbm pytest flake8
+          pip install rdkit scikit-learn pandas numpy lightgbm pytest flake8
 
       - name: Lint
         run: flake8 app.py fetch_data.py run_notebook.py --max-line-length 120
